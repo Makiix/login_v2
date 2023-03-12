@@ -4,7 +4,7 @@ $salt = bin2hex(random_bytes(8));
 if (isset($_POST['user']) && isset($_POST['password'])) {
   $new_user = [
     'user' => hash('sha256', $_POST['user']),
-    'password' => hash('sha256', $_POST['password']),
+    'password' => hash('sha256', $_POST['password'] . $salt),
     'salt' => $salt
   ];
 
@@ -14,6 +14,7 @@ if (isset($_POST['user']) && isset($_POST['password'])) {
   $json_data = json_encode($user, JSON_PRETTY_PRINT);
 
   file_put_contents('users.json', $json_data);
+  ob_clean();
   header('Location: index.php?msg=success');
   exit;
 }

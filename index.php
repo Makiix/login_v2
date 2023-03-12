@@ -32,29 +32,29 @@
 
 <?php
 if (isset($_COOKIE['login'])) {
-  header('Location: dashboard.html');
+  header('Location: dashboard.php');
   exit;
 }
 if (isset($_GET['erro'])) { ?>
-<script>
-alert("Usuário ou senha incorreto.")
-</script><?php } ?>
+  <script>
+    alert("Usuário ou senha incorreto.")
+  </script><?php } ?>
 
 <?php
 if (isset($_POST['user']) && isset($_POST['password'])) {
   $user = hash('sha256', $_POST['user']);
-  $password = hash('sha256', $salt . $_POST['password']);
+  $password = hash('sha256', $_POST['password']);
   $users = file_get_contents('users.json');
   $usuarios = json_decode($users, true);
 
   foreach ($usuarios as $usuario) {
-    if ($usuario['user'] == $user && $usuario['password'] == $password) {
+    if ($usuario['user'] == $user && $usuario['password'] == hash('sha256', $_POST['password'] . $usuario['salt'])) {
       session_start();
       $_SESSION['user'] = $user;
 
       setcookie('login', 'true', time() + 60);
 
-      header('Location: dashboard.html');
+      header('Location: dashboard.php');
       exit;
     }
   }
